@@ -9,52 +9,46 @@ rcParams['font.family'] = 'SimHei'
 # 另外可以设置负号显示正确
 rcParams['axes.unicode_minus'] = False
 
-# 读取图像并转换为灰度图像
-path = "./Pictures/fingerprint.tif"
-image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-
 if __name__ == "__main__":
+    # 读取图像并转换为灰度图像
+    path = "./Pictures/fingerprint.tif"
+    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
     # 如果图像读取失败，给出提示
     if image is None:
         print("无法读取图像，请检查图像路径")
         exit()
 
-    # 对图像进行傅里叶变换
-    f = np.fft.fft2(image)
+    # 获取图像的尺寸
+    M, N = image.shape
 
-    # 将频谱移到图像中心
-    fshift = np.fft.fftshift(f)
+    # 创建一个与图像大小相同的复数数组来存储傅里叶变换结果
+    F = np.zeros((M, N), dtype=complex)
+
+    # 计算傅里叶变换
+    for u in range(M):
+        for v in range(N):
+            print(f"u={u},v={v}\n")
+            sum_val = 0
+            temp_ex = -2j * np.pi * u / M
+            temp_ey = -2j * np.pi * v / N
+            for x in range(M):
+                for y in range(N):
+                    exponent = x * temp_ex + y * temp_ey
+                    sum_val += image[x, y] * np.exp(exponent)
+            F[u, v] = sum_val
+
+    # 频谱移位，使得低频部分移动到中心
+    Fshift = np.fft.fftshift(F)
 
     # 计算频谱的幅度并取对数，以便更容易可视化
-    magnitude_spectrum = np.abs(fshift)
+    magnitude_spectrum = np.abs(Fshift)
     magnitude_spectrum = np.log(magnitude_spectrum + 1)
 
-    # 绘制原始图像和频谱图
-    plt.figure(figsize=(12, 6))
-
-    # 显示原始图像
-    plt.subplot(1, 2, 1)
-    plt.imshow(image, cmap='gray')
-    plt.title('原始图像 (空域)')
-    plt.axis('off')
-
-    # 显示频谱图
-    plt.subplot(1, 2, 2)
+    # 保存频谱图
+    plt.figure(figsize=(6, 6))
     plt.imshow(magnitude_spectrum, cmap='gray')
     plt.title('频谱图 (频域)')
     plt.axis('off')
-
-    plt.savefig('./Pictures/frequency_spectrum.png')
-    plt.show()
-
-    # 反向傅里叶变换，恢复图像
-    f_ishift = np.fft.ifftshift(fshift)  # 移回原位
-    img_back = np.fft.ifft2(f_ishift)  # 反向傅里叶变换
-    img_back = np.abs(img_back)  # 取绝对值
-
-    # 显示恢复后的图像
-    plt.figure(figsize=(6, 6))
-    plt.imshow(img_back, cmap='gray')
-    plt.title('反向傅里叶变换恢复的图像')
-    plt.axis('off')
-    plt.show()
+    plt.savefig('frequency_spectrum.png', dpi=300, bbox_inches='tight')
+    plt.close()  # 关闭当前图形
