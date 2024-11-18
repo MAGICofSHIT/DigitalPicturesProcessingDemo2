@@ -1,3 +1,4 @@
+clc,clear,close all
 % 读取灰度图像
 image = imread('./Pictures/fingerprint.tif');
 if size(image, 3) == 3
@@ -15,12 +16,12 @@ F = zeros(M, N);
 for u = 1:M
     for v = 1:N
         sum_val = 0;
-        % disp(['u=' u 'v=' v]);
-        u
-        v
+        temp_ex = -2j * pi * (u - 1) / M;
+        temp_ey = -2j * pi * (v - 1) / N;
+        disp(['u=', num2str(u), ' v=', num2str(v)]);
         for x = 1:M
             for y = 1:N
-                exponent = -2j * pi * ((u-1) * (x-1) / M + (v-1) * (y-1) / N);
+                exponent = (x - 1) * temp_ex + (y - 1) * temp_ey;
                 sum_val = sum_val + image(x, y) * exp(exponent);
             end
         end
