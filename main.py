@@ -57,9 +57,6 @@ if __name__ == "__main__":
     F_centered = np.fft.fft2(centered_image)
     # F_centered = FT(centered_image)
 
-    # 频谱移位，使得低频部分移动到中心
-    # Fshift = np.fft.fftshift(F_centered)
-
     # 计算频谱的幅度并取对数，以便更容易可视化
     magnitude_spectrum_centered = np.abs(F_centered)
     magnitude_spectrum_centered = np.log(magnitude_spectrum_centered + 1)
