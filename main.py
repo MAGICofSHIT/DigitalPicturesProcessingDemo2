@@ -1,4 +1,3 @@
-import cv2
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from imageProcessing import *
@@ -32,9 +31,6 @@ if __name__ == "__main__":
     # 计算频谱的幅度
     original_magnitude_spectrum = np.abs(F)
 
-    # 频谱移位，使得低频部分移动到中心
-    # Fshift = np.fft.fftshift(F)
-
     # 保存原始频谱图
     plt.figure(figsize=(6, 6))
     plt.imshow(original_magnitude_spectrum, cmap='gray')
@@ -42,6 +38,7 @@ if __name__ == "__main__":
     plt.savefig('./Pictures/original_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
 
+    '''中心化'''
     # 对图像进行中心化处理：乘以(-1) ^ (x + y)
     centered_image = centerImage(image)
 
@@ -58,7 +55,7 @@ if __name__ == "__main__":
     plt.savefig('./Pictures/centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
 
-
+    '''取对数'''
     # 计算频谱的幅度并取对数，以便更容易可视化
     log_centered_magnitude_spectrum = np.log(centered_magnitude_spectrum + 1)
 
@@ -67,4 +64,52 @@ if __name__ == "__main__":
     plt.imshow(log_centered_magnitude_spectrum, cmap='gray')
     plt.axis('off')
     plt.savefig('./Pictures/log_centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()  # 关闭当前图形
+
+    '''平移'''
+    # 对图像进行平移操作
+    translated_image = translate_image(image, 100, 10)
+
+    # 保存平移图像
+    cv2.imwrite('./Pictures/translated_fingerprint.png', translated_image)
+
+    # 对图像进行中心化处理：乘以(-1) ^ (x + y)
+    centered_translated_image = centerImage(translated_image)
+
+    # 计算傅里叶变换
+    F_centered_translated = np.fft.fft2(centered_image)
+
+    # 计算频谱的幅度并取对数，以便更容易可视化
+    centered_translated_magnitude_spectrum = np.abs(F_centered_translated)
+    log_centered_translated_magnitude_spectrum = np.log(centered_translated_magnitude_spectrum + 1)
+
+    # 保存频谱图
+    plt.figure(figsize=(6, 6))
+    plt.imshow(log_centered_translated_magnitude_spectrum, cmap='gray')
+    plt.axis('off')
+    plt.savefig('./Pictures/translated_log_centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()  # 关闭当前图形
+
+    '''旋转'''
+    # 对图像进行旋转操作
+    rotated_image = rotate_image(image, 45)
+
+    # 保存平移图像
+    cv2.imwrite('./Pictures/rotated_fingerprint.png', rotated_image)
+
+    # 对图像进行中心化处理：乘以(-1) ^ (x + y)
+    centered_rotated_image = centerImage(rotated_image)
+
+    # 计算傅里叶变换
+    F_centered_rotated = np.fft.fft2(centered_rotated_image)
+
+    # 计算频谱的幅度并取对数，以便更容易可视化
+    centered_rotated_magnitude_spectrum = np.abs(F_centered_rotated)
+    log_centered_rotated_magnitude_spectrum = np.log(centered_rotated_magnitude_spectrum + 1)
+
+    # 保存频谱图
+    plt.figure(figsize=(6, 6))
+    plt.imshow(log_centered_rotated_magnitude_spectrum, cmap='gray')
+    plt.axis('off')
+    plt.savefig('./Pictures/rotated_log_centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
