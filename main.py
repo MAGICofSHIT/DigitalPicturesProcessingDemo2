@@ -26,10 +26,13 @@ if __name__ == "__main__":
 
     # 计算傅里叶变换
     F = np.fft.fft2(image)
-    # F = FT(image)
+    # F = DFT(image)
 
     # 计算频谱的幅度
     original_magnitude_spectrum = np.abs(F)
+
+    # 计算相位图
+    phase = np.angle(F)
 
     # 保存原始频谱图
     plt.figure(figsize=(6, 6))
@@ -68,6 +71,16 @@ if __name__ == "__main__":
     plt.savefig('./Pictures/log_centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
 
+    # 计算相位图
+    centered_phase = np.angle(F_centered)
+
+    # 保存相位图
+    plt.figure(figsize=(6, 6))
+    plt.imshow(centered_phase, cmap='gray')
+    plt.axis('off')
+    plt.savefig('./Pictures/centered_phase.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()  # 关闭当前图形
+
     '''平移'''
     # 对图像进行平移操作
     translated_image = translate_image(image, 100, 10)
@@ -79,7 +92,7 @@ if __name__ == "__main__":
     centered_translated_image = centerImage(translated_image)
 
     # 计算傅里叶变换
-    F_centered_translated = np.fft.fft2(centered_image)
+    F_centered_translated = np.fft.fft2(centered_translated_image)
 
     # 计算频谱的幅度并取对数，以便更容易可视化
     centered_translated_magnitude_spectrum = np.abs(F_centered_translated)
@@ -90,6 +103,16 @@ if __name__ == "__main__":
     plt.imshow(log_centered_translated_magnitude_spectrum, cmap='gray')
     plt.axis('off')
     plt.savefig('./Pictures/translated_log_centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()  # 关闭当前图形
+
+    # 计算相位
+    translated_phase = np.angle(F_centered_translated)
+
+    # 保存相位图
+    plt.figure(figsize=(6, 6))
+    plt.imshow(translated_phase, cmap='gray')
+    plt.axis('off')
+    plt.savefig('./Pictures/translated_centered_phase.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
 
     '''旋转'''
@@ -115,3 +138,25 @@ if __name__ == "__main__":
     plt.axis('off')
     plt.savefig('./Pictures/rotated_log_centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
+
+    # 计算相位
+    rotated_phase = np.angle(F_centered_rotated)
+
+    # 保存相位图
+    plt.figure(figsize=(6, 6))
+    plt.imshow(rotated_phase, cmap='gray')
+    plt.axis('off')
+    plt.savefig('./Pictures/rotated_centered_phase.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()  # 关闭当前图形
+
+    '''计算相角对图像信息的贡献（即相角的IDFT）'''
+    phase_reconstructed_image = IDFT(M, N, 1, centered_phase)
+
+    # 保存重建图片
+    plt.imsave('./Pictures/phase_reconstructed_image.png', phase_reconstructed_image, cmap='gray')
+
+    '''计算幅度谱对图像信息的贡献（即幅度的IDFT）'''
+    magnitude_reconstructed_image = IDFT(M, N, centerImage(centered_magnitude_spectrum), 1)
+
+    # 保存重建图片
+    plt.imsave('./Pictures/magnitude_reconstructed_image.png', magnitude_reconstructed_image, cmap='gray')

@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 
-def FT(image):
+def DFT(image):
     """
     计算图像的傅里叶变换。
     参数:
@@ -22,6 +22,36 @@ def FT(image):
                     sum_val += image[x, y] * np.exp(exponent)
             F[u, v] = sum_val
     return F
+
+
+def IDFT(M, N, magnitude_spectrum, phase_spectrum):
+    """
+    使用相角重建图像（假设单位幅值），并手动实现中心化和反傅里叶变换。
+
+    参数:
+        phase_spectrum (numpy.ndarray): 输入的相角矩阵。
+        save_path (str): 保存重建图像的路径。
+
+    返回:
+        reconstructed_image (numpy.ndarray): 反傅里叶变换后的图像。
+    """
+    # 构造单位幅值的复数频谱
+    complex_spectrum = magnitude_spectrum * np.exp(1j * phase_spectrum)  # 复数形式
+
+    # 实现二维反傅里叶变换
+    # reconstructed_image = np.zeros_like(magnitude_spectrum, dtype=np.float64)
+    # for x in range(M):
+    #     for y in range(N):
+    #         sum_complex = 0 + 0j  # 初始化复数和
+    #         for u in range(M):
+    #             for v in range(N):
+    #                 angle = 2 * np.pi * ((u * x / M) + (v * y / N))
+    #                 sum_complex += complex_spectrum[u, v] * np.exp(1j * angle)  # 直接使用复指数公式
+    #         reconstructed_image[x, y] = sum_complex / (N * M)  # 取实部并归一化
+    # reconstructed_image = np.abs(reconstructed_image)
+    reconstructed_image = np.abs(np.fft.ifft2(complex_spectrum))
+
+    return reconstructed_image
 
 
 def centerImage(image):
