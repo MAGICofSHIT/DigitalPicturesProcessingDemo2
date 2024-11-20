@@ -38,8 +38,18 @@ if __name__ == "__main__":
     plt.savefig('./Pictures/original_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()  # 关闭当前图形
 
+    '''对数化'''
+    # 对原始频谱取对数
+    log_magnitude_spectrum = np.log(original_magnitude_spectrum + 1)
+
+    # 保存频谱图
+    plt.figure(figsize=(6, 6))
+    plt.imshow(log_magnitude_spectrum, cmap='gray')
+    plt.axis('off')
+    plt.savefig('./Pictures/log_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.close()  # 关闭当前图形
+
     '''中心化'''
-    # 对图像进行中心化处理：乘以(-1) ^ (x + y)
     centered_image = centerImage(image)
 
     # 计算傅里叶变换
@@ -48,14 +58,6 @@ if __name__ == "__main__":
     # 计算频谱的幅度
     centered_magnitude_spectrum = np.abs(F_centered)
 
-    # 保存频谱图
-    plt.figure(figsize=(6, 6))
-    plt.imshow(centered_magnitude_spectrum, cmap='gray')
-    plt.axis('off')
-    plt.savefig('./Pictures/centered_frequency_spectrum.png', dpi=300, bbox_inches='tight', pad_inches=0)
-    plt.close()  # 关闭当前图形
-
-    '''取对数'''
     # 计算频谱的幅度并取对数，以便更容易可视化
     log_centered_magnitude_spectrum = np.log(centered_magnitude_spectrum + 1)
 
